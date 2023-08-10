@@ -17,7 +17,7 @@ const onChange: UniHelper.SwiperOnChange = (e) => {
       :autoplay="false"
       :interval="3000"
       @change="onChange"
-      acceleration="false"
+      :acceleration="false"
     >
       <swiper-item>
         <navigator
