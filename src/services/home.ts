@@ -1,3 +1,4 @@
+import type { BannerItem } from '@/types/home'
 import { http } from '@/utils/http.ts'
 
 enum API {
@@ -16,7 +17,7 @@ enum API {
 
 // 首页轮播图接口
 export const getHomeBannerAPI = (distributionSite = 1) => {
-  return http({
+  return http<BannerItem[]>({
     method: 'GET',
     url: API.BANNER_URL,
     data: {
