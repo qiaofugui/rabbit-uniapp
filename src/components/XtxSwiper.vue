@@ -2,11 +2,23 @@
 import { ref } from 'vue'
 
 const activeIndex = ref(0)
+
+// 当swiper下标发送变化时触发
+const onChange: UniHelper.SwiperOnChange = (e) => {
+  // 非空断言，主观上排除掉空值的可能性
+  activeIndex.value = e.detail!.current
+}
 </script>
 
 <template>
   <view class="carousel">
-    <swiper :circular="true" :autoplay="false" :interval="3000">
+    <swiper
+      :circular="true"
+      :autoplay="false"
+      :interval="3000"
+      @change="onChange"
+      acceleration="false"
+    >
       <swiper-item>
         <navigator
           url="/pages/index/index"
