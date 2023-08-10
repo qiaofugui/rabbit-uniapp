@@ -4,6 +4,7 @@ import CustomNavbar from './components/CustomNavbar.vue'
 
 <template>
   <CustomNavbar />
+  <XtxSwiper />
   <view class="index">index</view>
   <uni-card
     title="基础卡片"
