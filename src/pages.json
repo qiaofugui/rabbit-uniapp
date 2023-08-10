@@ -64,5 +64,13 @@
         "selectedIconPath": "static/tabs/user_selected.png"
       }
     ]
+  },
+  // 自动导入 uni-ui 组件
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      // uni-ui 规则如下配置
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
   }
 }
