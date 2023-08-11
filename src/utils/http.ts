@@ -12,7 +12,10 @@
 
 import { useMemberStore } from '@/stores'
 
+// 开发服务器
 const baseURL = 'https://pcapi-xiaotuxian-front-devtest.itheima.net'
+// 生产服务器
+// const baseURL = 'https://pcapi-xiaotuxian-front.itheima.net'
 
 // 添加拦截器
 const httpInterceptor = {
