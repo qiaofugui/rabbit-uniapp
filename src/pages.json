@@ -96,10 +96,10 @@
 			"^Xtx(.*)": "@/components/Xtx$1.vue"
 		}
 	},
-  // 分包
+	// 分包
 	"subPackages": [
 		{
-      // 子包根目录
+			// 子包根目录
 			"root": "pagesMember/settings",
 			"pages": [
 				{
@@ -109,15 +109,28 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesMember/profile",
+			"pages": [
+				{
+					"path": "profile",
+					"style": {
+						"navigationBarTitleText": "个人信息",
+            "navigationStyle": "custom"
+					}
+				}
+			]
 		}
 	],
-  // 分包预下载规则
-  "preloadRule": {
-    "pages/my/my": {
-      "network": "all",
-      "packages": [
-        "pagesMember/settings"
-      ]
-    }
-  }
+	// 分包预下载规则
+	"preloadRule": {
+		"pages/my/my": {
+			"network": "all",
+			"packages": [
+				"pagesMember/settings",
+				"pagesMember/profile"
+			]
+		}
+	}
 }
