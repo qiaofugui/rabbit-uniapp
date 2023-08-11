@@ -12,7 +12,7 @@
 		{
 			"path": "pages/my/my",
 			"style": {
-        "navigationStyle": "custom",
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "我的"
 			}
 		},
@@ -95,5 +95,29 @@
 			// 以 Xtx 开头的组件，在 @/components/ 下查找
 			"^Xtx(.*)": "@/components/Xtx$1.vue"
 		}
-	}
+	},
+  // 分包
+	"subPackages": [
+		{
+      // 子包根目录
+			"root": "pagesMember/settings",
+			"pages": [
+				{
+					"path": "settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				}
+			]
+		}
+	],
+  // 分包预下载规则
+  "preloadRule": {
+    "pages/my/my": {
+      "network": "all",
+      "packages": [
+        "pagesMember/settings"
+      ]
+    }
+  }
 }
