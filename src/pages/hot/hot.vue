@@ -24,11 +24,12 @@ uni.setNavigationBarTitle({ title: currUrlMap!.title })
 
 // 封面图
 const bannerPicture = ref('')
-const subTypes = ref<SubTypeItem[]>([])
+const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([])
 // 高亮的tabs
 const activeIndex = ref(0)
 // 获取热门推荐数据
 const getHotRecommendData = async () => {
+  // import.meta.env.DEV
   const res = await getHotRecommendAPI(currUrlMap!.url)
   bannerPicture.value = res.result.bannerPicture
   subTypes.value = res.result.subTypes
@@ -38,6 +39,34 @@ const getHotRecommendData = async () => {
 onLoad(() => {
   getHotRecommendData()
 })
+
+// 滚动触底
+const onScrolltolower = async () => {
+  // 获取当前选项
+  const currSubTypes = subTypes.value[activeIndex.value]
+
+  // 分页条件
+  if (currSubTypes.goodsItems.page < currSubTypes.goodsItems.pages) {
+    // 当前页码累加
+    currSubTypes.goodsItems.page++
+  } else {
+    // 标记已结束
+    currSubTypes.finish = true
+    return uni.showToast({
+      icon: 'none',
+      title: '没有更多数据了'
+    })
+  }
+  const res = await getHotRecommendAPI(currUrlMap!.url, {
+    subType: currSubTypes.id,
+    page: currSubTypes.goodsItems.page,
+    pageSize: currSubTypes.goodsItems.pageSize
+  })
+  // 新的列表选项
+  const newSubTypes = res.result.subTypes[activeIndex.value]
+  // 数组追加
+  currSubTypes.goodsItems.items.push(...newSubTypes.goodsItems.items)
+}
 </script>
 
 <template>
@@ -53,9 +82,11 @@ onLoad(() => {
           item.title }}</text>
     </view>
     <!-- 推荐列表 -->
-    <scroll-view scroll-y class="scroll-view" v-for="(item, index) in subTypes" :key="item.id" v-show="activeIndex === index">
+    <scroll-view scroll-y class="scroll-view" v-for="(item, index) in subTypes" :key="item.id"
+      v-show="activeIndex === index" @scrolltolower="onScrolltolower">
       <view class="goods">
-        <navigator hover-class="none" class="navigator" v-for="goods in item.goodsItems.items" :key="goods.id" :url="`/pages/goods/goods?id=`">
+        <navigator hover-class="none" class="navigator" v-for="goods in item.goodsItems.items" :key="goods.id"
+          :url="`/pages/goods/goods?id=`">
           <image class="thumb" :src="goods.picture"></image>
           <view class="name ellipsis">{{ goods.name }}</view>
           <view class="price">
@@ -64,7 +95,7 @@ onLoad(() => {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">{{ item.finish ? '没有更多数据了~' : '正在加载... ' }}</view>
     </scroll-view>
   </view>
 </template>
