@@ -8,11 +8,12 @@ import {
 import CustomNavbar from './components/CustomNavbar.vue'
 import { onLoad } from '@dcloudio/uni-app'
 import type { BannerItem, CategoryItem, HotRecommendItem } from '@/types/home'
-import type { XtxGuessInstance } from '@/types/components'
 
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
+
+import { useGuessList } from '@/composables/index'
 
 // 是否加载中
 const isLoading = ref(false)
@@ -49,10 +50,7 @@ onLoad(async () => {
 })
 
 // 滚动到底部加载更多
-const guessRef = ref<XtxGuessInstance>()
-const onScrolltolower = () => {
-  guessRef.value?.getGuessYouLikeData()
-}
+const { guessRef, onScrolltolower } =useGuessList()
 // 自定义下拉刷新被触发
 const isTriggered = ref(false)
 const onRefresherrefresh = async () => {
