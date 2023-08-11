@@ -26,7 +26,7 @@ defineProps<{
       :acceleration="false"
     >
       <swiper-item v-for="item in list" :key="item.id">
-        <navigator :url="item.hrefUrl" hover-class="none" class="navigator">
+        <navigator url="`/pages/goods/goods?id=${item.hrefUrl}`" hover-class="none" class="navigator">
           <image mode="aspectFill" class="image" :src="item.imgUrl"></image>
         </navigator>
       </swiper-item>
