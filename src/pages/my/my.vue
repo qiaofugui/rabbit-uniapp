@@ -15,7 +15,7 @@ const orderTypes = [
 // 获取会员信息
 const memberStore = useMemberStore()
 
-const { guessRef, onScrolltolower } =useGuessList()
+const { guessRef, onScrolltolower } = useGuessList()
 </script>
 
 <template>

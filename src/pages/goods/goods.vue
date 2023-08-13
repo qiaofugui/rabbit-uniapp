@@ -1,13 +1,12 @@
-// src/pages/goods/goods.vue
 <script setup lang="ts">
 import { getGoodsDetailAPI } from '@/services/goods'
 import { onLoad } from '@dcloudio/uni-app'
 import type { GoodsResult } from '@/types/goods'
 import { ref } from 'vue'
 
-import PageSkeleton from './components/PageSkeleton'
-import AddressPanel from './components/AddressPanel'
-import ServicePanel from './components/ServicePanel'
+import PageSkeleton from './components/PageSkeleton.vue'
+import AddressPanel from './components/AddressPanel.vue'
+import ServicePanel from './components/ServicePanel.vue'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -165,17 +164,18 @@ const openPopup = (name: typeof popupName.value) => {
     </view>
   </view>
 
-  <!-- uni-ui 的弹出层 -->
+  <!-- uni-ui 弹出层 -->
   <uni-popup ref="popup" type="bottom" background-color="#fff">
-    <AddressPanel v-if="popupName === 'address'" @close="popup?.close()" />
-    <ServicePanel v-if="popupName === 'service'" @close="popup?.close()" />
+    <view style="margin-bottom: 80rpx;">
+      <AddressPanel v-if="popupName === 'address'" @close="popup?.close()" />
+      <ServicePanel v-if="popupName === 'service'" @close="popup?.close()" />
+    </view>
   </uni-popup>
 </template>
 
 <style lang="scss">
 page {
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -367,6 +367,7 @@ page {
 /* 同类推荐 */
 .similar {
   padding-left: 20rpx;
+  margin-bottom: 50rpx;
 
   .content {
     padding: 0 20rpx 20rpx;
@@ -415,6 +416,11 @@ page {
 
 /* 底部工具栏 */
 .toolbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc((var(--window-bottom)));
+  z-index: 1;
   background-color: #fff;
   height: 100rpx;
   padding: 0 20rpx;
