@@ -151,7 +151,9 @@
 			"network": "all",
 			"packages": [
 				"pagesMember/settings",
-				"pagesMember/profile"
+				"pagesMember/profile",
+				"pagesMember/address",
+				"pagesMember/address-form"
 			]
 		}
 	}
