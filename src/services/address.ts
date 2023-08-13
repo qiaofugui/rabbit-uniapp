@@ -7,6 +7,10 @@ enum API {
   ADDRESS_ADD_URL = '/member/address',
   // 获取收获地址列表
   ADDRESS_LIST_URL = '/member/address',
+  // 获取收获地址详情
+  ADDRESS_DETAIL_URL = '/member/address/',
+  // 修改收获地址
+  ADDRESS_UPDATE_URL = '/member/address/',
 }
 
 // 添加收获地址
@@ -23,6 +27,23 @@ export const getMemberAddressAPI = () => {
   return http<AddressItem[]>({
     url: API.ADDRESS_LIST_URL,
     method: 'GET'
+  })
+}
+
+// 获取收获地址详情
+export const getMemberAddressByIdAPI = (id: string) => {
+  return http<AddressItem>({
+    url: API.ADDRESS_DETAIL_URL + id,
+    method: 'GET'
+  })
+}
+
+// 修改收获地址
+export const putMemberAddressByIdAPI = (id: string, data: AddressParams) => {
+  return http({
+    url: API.ADDRESS_UPDATE_URL + id,
+    method: 'PUT',
+    data
   })
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { getMemberAddressAPI } from '@/services/address'
-import { onLoad, onShow } from '@dcloudio/uni-app'
+import { onShow } from '@dcloudio/uni-app'
 import type { AddressItem } from '@/types/address'
 
 const addressList = ref<AddressItem[]>([])
@@ -10,10 +10,7 @@ const getMemberAddressData = async () => {
   const res = await getMemberAddressAPI()
   addressList.value = res.result
 }
-// 初始化调用
-onLoad(() => {
-  getMemberAddressData()
-})
+// 页面显示调用
 onShow(() => {
   getMemberAddressData()
 })

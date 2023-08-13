@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { postMemberAddressAPI } from '@/services/address'
+import { postMemberAddressAPI, getMemberAddressByIdAPI, putMemberAddressByIdAPI } from '@/services/address'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 获取页面参数
 const query = defineProps<{
@@ -9,6 +10,16 @@ const query = defineProps<{
 
 // 动态设置标题
 uni.setNavigationBarTitle({ title: query.id ? '修改地址' : '新建地址' })
+
+// 获取收获地址详情
+const getMemberAddressByIdData = async () => {
+  if (!query.id) return
+  const res = await getMemberAddressByIdAPI(query.id)
+  Object.assign(form.value, res.result)
+}
+onLoad(() => {
+  getMemberAddressByIdData()
+})
 
 // 表单数据
 const form = ref({
@@ -42,14 +53,19 @@ const onSwitchChange: UniHelper.SwitchOnChange = (e) => {
 
 // 提交表单
 const onSubmit = async () => {
-  await postMemberAddressAPI(form.value)
+  if (query.id) {
+    await putMemberAddressByIdAPI(query.id, form.value)
+  } else {
+    await postMemberAddressAPI(form.value)
+  }
+
   uni.showToast({
-    icon:'success',
-    title:'操作成功'
+    icon: 'success',
+    title: '操作成功'
   })
   setTimeout(() => {
     uni.navigateBack()
-  },500)
+  }, 500)
 }
 </script>
 
