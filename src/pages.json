@@ -160,6 +160,17 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesOrder/detail",
+			"pages": [
+				{
+					"path": "detail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
+					}
+				}
+			]
 		}
 	],
 	// 分包预下载规则
@@ -173,16 +184,18 @@
 				"pagesMember/address-form"
 			]
 		},
-    "pages/cart/cart": {
+		"pages/cart/cart": {
 			"network": "all",
 			"packages": [
-				"pagesOrder/create"
+				"pagesOrder/create",
+				"pagesOrder/detail"
 			]
 		},
-    "pages/cart/cart2": {
+		"pages/cart/cart2": {
 			"network": "all",
 			"packages": [
-				"pagesOrder/create"
+				"pagesOrder/create",
+				"pagesOrder/detail"
 			]
 		}
 	}
