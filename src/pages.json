@@ -22,7 +22,7 @@
 				"navigationBarTitleText": "购物车"
 			}
 		},
-    {
+		{
 			"path": "pages/cart/cart2",
 			"style": {
 				"navigationBarTitleText": "购物车"
@@ -149,6 +149,17 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesOrder/create",
+			"pages": [
+				{
+					"path": "create",
+					"style": {
+						"navigationBarTitleText": "填写订单"
+					}
+				}
+			]
 		}
 	],
 	// 分包预下载规则
@@ -160,6 +171,18 @@
 				"pagesMember/profile",
 				"pagesMember/address",
 				"pagesMember/address-form"
+			]
+		},
+    "pages/cart/cart": {
+			"network": "all",
+			"packages": [
+				"pagesOrder/create"
+			]
+		},
+    "pages/cart/cart2": {
+			"network": "all",
+			"packages": [
+				"pagesOrder/create"
 			]
 		}
 	}
