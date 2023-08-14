@@ -6,6 +6,8 @@ enum API {
   ADDCART_URL = '/member/cart',
   // 获取购物车列表
   CARTLIST_URL = '/member/cart',
+  // 删除购物车
+  DELETECART_URL = '/member/cart',
 }
 
 // 加入购物车
@@ -22,5 +24,14 @@ export const getMemberCartAPI = () => {
   return http<CartItem>({
     method: 'GET',
     url: API.CARTLIST_URL
+  })
+}
+
+// 删除购物车
+export const deleteMemberCartAPI = (data: { ids: string[] }) => {
+  return http({
+    method: 'DELETE',
+    url: `${API.DELETECART_URL}`,
+    data
   })
 }

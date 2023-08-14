@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
 import { onShow } from '@dcloudio/uni-app'
-import { getMemberCartAPI } from '@/services/cart'
+import { getMemberCartAPI, deleteMemberCartAPI } from '@/services/cart'
 import type { CartItem } from '@/types/cart'
 import { ref } from 'vue'
 
@@ -20,6 +20,20 @@ onShow(() => {
   // 获取购物车数据
   getMemberCartData()
 })
+
+// 删除购物车
+const onDeleteCart = (skuId: string) => {
+  // 弹窗二次确认
+  uni.showModal({
+    content: '确认删除吗',
+    success: async (res) => {
+      if (res.confirm) {
+        await deleteMemberCartAPI({ ids: [skuId] })
+        getMemberCartData()
+      }
+    }
+  })
+}
 </script>
 
 <template>
@@ -42,12 +56,11 @@ onShow(() => {
               <!-- 选中状态 -->
               <text class="checkbox" :class="{ checked: item.price }"></text>
               <navigator :url="`/pages/goods/goods?id=${item.id}`" hover-class="none" class="navigator">
-                <image mode="aspectFill" class="picture"
-                  :src="item.picture"></image>
+                <image mode="aspectFill" class="picture" :src="item.picture"></image>
                 <view class="meta">
-                  <view class="name ellipsis">{{item.name}}</view>
-                  <view class="attrsText ellipsis">{{item.attrsText}}</view>
-                  <view class="price">{{item.nowPrice}}</view>
+                  <view class="name ellipsis">{{ item.name }}</view>
+                  <view class="attrsText ellipsis">{{ item.attrsText }}</view>
+                  <view class="price">{{ item.nowPrice }}</view>
                 </view>
               </navigator>
               <!-- 商品数量 -->
@@ -60,7 +73,7 @@ onShow(() => {
             <!-- 右侧删除按钮 -->
             <template #right>
               <view class="cart-swipe-right">
-                <button class="button delete-button">删除</button>
+                <button class="button delete-button" @tap="onDeleteCart(item.skuId)">删除</button>
               </view>
             </template>
           </uni-swipe-action-item>
