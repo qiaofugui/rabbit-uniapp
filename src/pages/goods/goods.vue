@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getGoodsDetailAPI } from '@/services/goods'
+import { postMemberCartAPI } from '@/services/cart'
 import { onLoad } from '@dcloudio/uni-app'
 import type { GoodsResult } from '@/types/goods'
 import { ref, computed } from 'vue'
@@ -7,7 +8,7 @@ import { ref, computed } from 'vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
-import type { SkuPopupInstance, SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import type { SkuPopupEvent, SkuPopupInstance, SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -105,6 +106,13 @@ const skuPopupRef = ref<SkuPopupInstance>()
 const selectArrText = computed(() => {
   return skuPopupRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
 })
+
+// 加入购物车的事件
+const onAddCart = async (e: SkuPopupEvent) => {
+  postMemberCartAPI({ skuId: e._id, count: e.buy_num })
+  uni.showToast({title:'添加成功'})
+  isShowSku.value = false
+}
 </script>
 
 <template>
@@ -142,7 +150,7 @@ const selectArrText = computed(() => {
         <view class="action">
           <view class="item arrow" @tap="openSkuPopup(SkuMode.Both)">
             <text class="label">选择</text>
-            <text class="text ellipsis"> {{selectArrText}} </text>
+            <text class="text ellipsis"> {{ selectArrText }} </text>
           </view>
           <view class="item arrow" @tap="openPopup('address')">
             <text class="label">送至</text>
@@ -219,11 +227,12 @@ const selectArrText = computed(() => {
   </uni-popup>
 
   <!-- sku组件 -->
-  <vk-data-goods-sku-popup v-model="isShowSku" :localdata="localdata" :mode="mode" add-cart-background-color="#FFA868" buy-cart-background-color="#27BA9B" :actived-style="{
-    color:'#27BA9B',
-    borderColor: '#27BA9B',
-    backroundColor: '#27BA9B'
-  }" ref="skuPopupRef" />
+  <vk-data-goods-sku-popup v-model="isShowSku" :localdata="localdata" :mode="mode" add-cart-background-color="#FFA868"
+    buy-cart-background-color="#27BA9B" :actived-style="{
+      color: '#27BA9B',
+      borderColor: '#27BA9B',
+      backroundColor: '#27BA9B'
+    }" @add-cart="onAddCart" ref="skuPopupRef" />
 </template>
 
 <style lang="scss">
