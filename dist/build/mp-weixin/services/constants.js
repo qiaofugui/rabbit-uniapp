@@ -1,0 +1,1 @@
+"use strict";var i=(i=>(i[i.DaiFuKuan=1]="DaiFuKuan",i[i.DaiFaHuo=2]="DaiFaHuo",i[i.DaiShouHuo=3]="DaiShouHuo",i[i.DaiPingJia=4]="DaiPingJia",i[i.YiWanCheng=5]="YiWanCheng",i[i.YiQuXiao=6]="YiQuXiao",i))(i||{});exports.OrderState=i,exports.orderStateList=[{id:0,text:""},{id:1,text:"待付款"},{id:2,text:"待发货"},{id:3,text:"待收货"},{id:4,text:"待评价"},{id:5,text:"已完成"},{id:6,text:"已取消"}];

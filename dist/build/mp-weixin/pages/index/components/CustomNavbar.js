@@ -1,0 +1,1 @@
+"use strict";const e=require("../../../common/vendor.js"),n=require("../../../common/assets.js"),s=e.defineComponent({__name:"CustomNavbar",setup(s){const{safeAreaInsets:t}=e.index.getSystemInfoSync();return(s,o)=>({a:n._imports_0,b:e.unref(t).top+10+"px"})}});wx.createComponent(s);

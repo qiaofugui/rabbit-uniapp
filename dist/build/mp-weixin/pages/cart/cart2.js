@@ -1,0 +1,1 @@
+"use strict";const e=require("../../common/vendor.js");Math||t();const t=()=>"./components/CartMain.js",n=e.defineComponent({__name:"cart2",setup:t=>(t,n)=>({a:e.p({"safe-area-inset-bottom":!0})})});wx.createPage(n);

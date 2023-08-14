@@ -1,0 +1,1 @@
+"use strict";const e=require("../../../common/vendor.js"),n=e.defineComponent({__name:"CategoryPanel",props:{list:null},setup:n=>(o,t)=>({a:e.f(n.list,((n,o,t)=>({a:n.icon,b:e.t(n.name),c:n.id})))})});wx.createComponent(n);

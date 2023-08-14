@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "商品详情",
+  "usingComponents": {
+    "uni-popup": "../../node-modules/@dcloudio/uni-ui/lib/uni-popup/uni-popup",
+    "vk-data-goods-sku-popup": "../../components/vk-data-goods-sku-popup/vk-data-goods-sku-popup",
+    "page-skeleton": "./components/PageSkeleton",
+    "address-panel": "./components/AddressPanel",
+    "service-panel": "./components/ServicePanel"
+  }
+}
