@@ -10,6 +10,8 @@ enum API {
   DELETECART_URL = '/member/cart',
   // 选中/不选中/修改数量购物车商品
   UPDATECART_URL = '/member/cart/',
+  // 全选
+  SELECTEDALL_URL = '/member/cart/selected',
 }
 
 // 加入购物车
@@ -44,5 +46,14 @@ export const putMemberCartBySkuIdAPI = (skuId: string, data: { selected?: boolea
     method: 'PUT',
     url: `${API.UPDATECART_URL}${skuId}`,
     data,
+  })
+}
+
+// 全选
+export const putMemberCartSelectedAPI = (data: { selected: boolean }) => {
+  return http({
+    method: 'PUT',
+    url: API.SELECTEDALL_URL,
+    data
   })
 }
