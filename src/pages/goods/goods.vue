@@ -9,6 +9,9 @@ import PageSkeleton from './components/PageSkeleton.vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
 import type { SkuPopupEvent, SkuPopupInstance, SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import { useAddressStore } from '@/stores/modules/address'
+
+const addressStore = useAddressStore()
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -110,8 +113,13 @@ const selectArrText = computed(() => {
 // 加入购物车的事件
 const onAddCart = async (e: SkuPopupEvent) => {
   postMemberCartAPI({ skuId: e._id, count: e.buy_num })
-  uni.showToast({title:'添加成功'})
+  uni.showToast({ title: '添加成功' })
   isShowSku.value = false
+}
+
+// 立即购买
+const onBuyNow = async (e: SkuPopupEvent) => {
+  uni.navigateTo({ url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}` })
 }
 </script>
 
@@ -154,7 +162,8 @@ const onAddCart = async (e: SkuPopupEvent) => {
           </view>
           <view class="item arrow" @tap="openPopup('address')">
             <text class="label">送至</text>
-            <text class="text ellipsis"> 请选择收获地址 </text>
+            <text class="text ellipsis"> {{ addressStore.selectedAddress.fullLocation + ' ' + addressStore.selectedAddress.address || '请选择收获地址' }}
+            </text>
           </view>
           <view class="item arrow" @tap="openPopup('service')">
             <text class="label">服务</text>
@@ -232,7 +241,7 @@ const onAddCart = async (e: SkuPopupEvent) => {
       color: '#27BA9B',
       borderColor: '#27BA9B',
       backroundColor: '#27BA9B'
-    }" @add-cart="onAddCart" ref="skuPopupRef" />
+    }" @add-cart="onAddCart" @buy-now="onBuyNow" ref="skuPopupRef" />
 </template>
 
 <style lang="scss">

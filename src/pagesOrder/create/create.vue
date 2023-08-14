@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import type { OrderPreResult } from '@/types/order'
 import { getMemberOrderPreAPI } from '@/services/order'
 import { useAddressStore } from '@/stores/modules/address'
+import { postMemberOrderPreNowAPI } from '@/services/order'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -24,11 +25,21 @@ const onChangeDelivery: UniHelper.SelectorPickerOnChange = (ev) => {
   activeIndex.value = ev.detail.value
 }
 
+const query = defineProps<{
+  skuId?: string
+  count?: string
+}>()
+
 // 获取订单
 const orderPre = ref<OrderPreResult>({})
 const getMemberOrderPreData = async () => {
-  const res = await getMemberOrderPreAPI()
-  orderPre.value = res.result
+  if (query.count && query.skuId) {
+    const res = await postMemberOrderPreNowAPI({ count: query.count, skuId: query.skuId })
+    orderPre.value = res.result
+  } else {
+    const res = await getMemberOrderPreAPI()
+    orderPre.value = res.result
+  }
 }
 onLoad(() => {
   getMemberOrderPreData()
@@ -37,7 +48,7 @@ onLoad(() => {
 const addressStore = useAddressStore()
 // 收货地址
 const selectedAddress = computed(() => {
-  return addressStore.selectedAddress || orderPre.value?.userAddresses.find(v => v.isDefault)
+  return addressStore.selectedAddress || orderPre.value?.userAddresses?.find(v => v.isDefault)
 })
 </script>
 
@@ -89,11 +100,11 @@ const selectedAddress = computed(() => {
     <view class="settlement">
       <view class="item">
         <text class="text">商品总价: </text>
-        <text class="number symbol">{{ orderPre?.summary.totalPrice.toFixed(2) }}</text>
+        <text class="number symbol">{{ orderPre?.summary?.totalPrice.toFixed(2) }}</text>
       </view>
       <view class="item">
         <text class="text">运费: </text>
-        <text class="number symbol">{{ orderPre?.summary.postFee.toFixed(2) }}</text>
+        <text class="number symbol">{{ orderPre?.summary?.postFee.toFixed(2) }}</text>
       </view>
     </view>
   </scroll-view>
@@ -101,7 +112,7 @@ const selectedAddress = computed(() => {
   <!-- 吸底工具栏 -->
   <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
     <view class="total-pay symbol">
-      <text class="number">{{ orderPre?.summary.totalPayPrice.toFixed(2) }}</text>
+      <text class="number">{{ orderPre?.summary?.totalPayPrice.toFixed(2) }}</text>
     </view>
     <view class="button" :class="{ disabled: true }"> 提交订单 </view>
   </view>

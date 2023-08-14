@@ -1,8 +1,30 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import type { AddressItem } from '@/types/address'
+import { getMemberAddressAPI } from '@/services/address'
+import { useAddressStore } from '@/stores/modules/address'
+
 // 子调父
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
+
+const addressList = ref<AddressItem[]>([])
+// 获取收货地址列表
+const getMemberAddressData = async () => {
+  const res = await getMemberAddressAPI()
+  addressList.value = res.result
+}
+
+onMounted(() => {
+  getMemberAddressData()
+})
+
+const onChangeAddress = (item: AddressItem) => {
+  const addressStore = useAddressStore()
+  addressStore.changeSelectedAddress(item)
+  emit('close')
+}
 </script>
 
 <template>
@@ -13,24 +35,16 @@ const emit = defineEmits<{
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">张三 13333333333</view>
-        <view class="address">宇宙银河系太阳系地球中国</view>
-        <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">李四 15555555555</view>
-        <view class="address">宇宙银河系太阳系地球中国</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">王五 16666666666</view>
-        <view class="address">宇宙银河系太阳系地球中国</view>
-        <text class="icon icon-ring"></text>
+      <view class="item" v-for="item in addressList" :key="item.id" @tap="onChangeAddress(item)">
+        <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+        <view class="address">{{ item.fullLocation }} {{ item.address }}</view>
+        <text class="icon " :class="item.isDefault ? 'icon-checked' : 'icon-ring'"></text>
       </view>
     </view>
     <view class="footer">
-      <view class="button primary"> 新建地址 </view>
+      <navigator class="button primary" hover-class="none" :url="`/pagesMember/address-form/address-form`">
+        新建地址
+      </navigator>
       <view v-if="false" class="button primary">确定</view>
     </view>
   </view>
