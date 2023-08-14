@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMemberProFileAPI, putMemberProFileAPI } from '@/services/profile'
+import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { useMemberStore } from '@/stores'
 import type { Gender, ProfileDetail } from '@/types/member'
 import { formatDate } from '@/utils'
@@ -12,7 +12,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
 // 获取个人信息，修改个人信息需提供初始值
 const profile = ref({} as ProfileDetail)
 const getMemberProfileData = async () => {
-  const res = await getMemberProFileAPI()
+  const res = await getMemberProfileAPI()
   profile.value = res.result
   // 同步 Store 的头像和昵称，用于我的页面展示
   memberStore.profile!.avatar = res.result.avatar
@@ -74,7 +74,7 @@ const uploadFile = (file: string) => {
         memberStore.profile!.avatar = avatar
         uni.showToast({ icon: 'success', title: '更新成功' })
       } else {
-        uni.showToast({ icon: 'error', title: '更新失败' })
+        uni.showToast({ icon: 'error', title: '出现错误' })
       }
     },
   })
@@ -102,7 +102,7 @@ const onFullLocationChange: UniHelper.RegionPickerOnChange = (ev) => {
 // 点击保存提交表单
 const onSubmit = async () => {
   const { nickname, gender, birthday } = profile.value
-  const res = await putMemberProFileAPI({
+  const res = await putMemberProfileAPI({
     nickname,
     gender,
     birthday,
@@ -115,7 +115,7 @@ const onSubmit = async () => {
   uni.showToast({ icon: 'success', title: '保存成功' })
   setTimeout(() => {
     uni.navigateBack()
-  }, 500)
+  }, 400)
 }
 </script>
 
@@ -160,8 +160,14 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">生日</text>
-          <picker @change="onBirthdayChange" mode="date" class="picker" :value="profile?.birthday" start="1900-01-01"
-            :end="formatDate(new Date())">
+          <picker
+            @change="onBirthdayChange"
+            mode="date"
+            class="picker"
+            :value="profile?.birthday"
+            start="1900-01-01"
+            :end="formatDate(new Date())"
+          >
             <view v-if="profile?.birthday">{{ profile?.birthday }}</view>
             <view class="placeholder" v-else>请选择日期</view>
           </picker>
@@ -170,7 +176,12 @@ const onSubmit = async () => {
         <!-- #ifdef MP-WEIXIN -->
         <view class="form-item">
           <text class="label">城市</text>
-          <picker @change="onFullLocationChange" mode="region" class="picker" :value="profile?.fullLocation?.split(' ')">
+          <picker
+            @change="onFullLocationChange"
+            mode="region"
+            class="picker"
+            :value="profile?.fullLocation?.split(' ')"
+          >
             <view v-if="profile?.fullLocation">{{ profile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
@@ -178,7 +189,7 @@ const onSubmit = async () => {
         <!-- #endif -->
         <view class="form-item">
           <text class="label">职业</text>
-          <input class="input" type="text" placeholder="请填写职业" :v-model="profile?.profession" />
+          <input class="input" type="text" placeholder="请填写职业" :value="profile?.profession" />
         </view>
       </view>
       <!-- 提交按钮 -->
@@ -300,7 +311,6 @@ page {
     .picker {
       flex: 1;
     }
-
     .placeholder {
       color: #808080;
     }
