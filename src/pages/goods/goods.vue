@@ -162,7 +162,7 @@ const onBuyNow = async (e: SkuPopupEvent) => {
           </view>
           <view class="item arrow" @tap="openPopup('address')">
             <text class="label">送至</text>
-            <text class="text ellipsis"> {{ addressStore.selectedAddress.fullLocation + ' ' + addressStore.selectedAddress.address || '请选择收获地址' }}
+            <text class="text ellipsis"> {{ addressStore.selectedAddress?.fullLocation + addressStore.selectedAddress?.address || '请选择收获地址' }}
             </text>
           </view>
           <view class="item arrow" @tap="openPopup('service')">

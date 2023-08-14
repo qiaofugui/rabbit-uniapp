@@ -172,6 +172,28 @@
 					}
 				}
 			]
+		},
+		{
+			"root": "pagesOrder/payment",
+			"pages": [
+				{
+					"path": "payment",
+					"style": {
+						"navigationBarTitleText": "支付结果"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesOrder/list",
+			"pages": [
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "订单列表"
+					}
+				}
+			]
 		}
 	],
 	// 分包预下载规则
@@ -182,21 +204,24 @@
 				"pagesMember/settings",
 				"pagesMember/profile",
 				"pagesMember/address",
-				"pagesMember/address-form"
+				"pagesMember/address-form",
+				"pagesOrder/list"
 			]
 		},
 		"pages/cart/cart": {
 			"network": "all",
 			"packages": [
 				"pagesOrder/create",
-				"pagesOrder/detail"
+				"pagesOrder/detail",
+				"pagesOrder/payment"
 			]
 		},
 		"pages/cart/cart2": {
 			"network": "all",
 			"packages": [
 				"pagesOrder/create",
-				"pagesOrder/detail"
+				"pagesOrder/detail",
+				"pagesOrder/payment"
 			]
 		}
 	}

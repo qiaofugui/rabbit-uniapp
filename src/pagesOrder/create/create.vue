@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { onLoad } from '@dcloudio/uni-app';
-import { computed, ref } from 'vue'
-import type { OrderPreResult } from '@/types/order'
-import { getMemberOrderPreAPI, postMemberOrderPreNowAPI, postMemberOrderAPI } from '@/services/order'
+import {
+  getMemberOrderPreAPI,
+  getMemberOrderPreNowAPI,
+  getMemberOrderRepurchaseByIdAPI,
+  postMemberOrderAPI,
+} from '@/services/order'
 import { useAddressStore } from '@/stores/modules/address'
+import type { OrderPreResult } from '@/types/order'
+import { onLoad } from '@dcloudio/uni-app'
+import { computed, ref } from 'vue'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -24,74 +29,101 @@ const onChangeDelivery: UniHelper.SelectorPickerOnChange = (ev) => {
   activeIndex.value = ev.detail.value
 }
 
+// 页面参数
 const query = defineProps<{
   skuId?: string
   count?: string
+  orderId?: string
 }>()
 
-// 获取订单
-const orderPre = ref<OrderPreResult>({})
+// 获取订单信息
+const orderPre = ref<OrderPreResult>()
 const getMemberOrderPreData = async () => {
   if (query.count && query.skuId) {
-    const res = await postMemberOrderPreNowAPI({ count: query.count, skuId: query.skuId })
+    const res = await getMemberOrderPreNowAPI({
+      count: query.count,
+      skuId: query.skuId,
+    })
+    orderPre.value = res.result
+  } else if (query.orderId) {
+    // 再次购买
+    const res = await getMemberOrderRepurchaseByIdAPI(query.orderId)
     orderPre.value = res.result
   } else {
     const res = await getMemberOrderPreAPI()
     orderPre.value = res.result
   }
 }
+
 onLoad(() => {
   getMemberOrderPreData()
 })
 
 const addressStore = useAddressStore()
 // 收货地址
-const selectedAddress = computed(() => {
-  return addressStore.selectedAddress || orderPre.value?.userAddresses?.find(v => v.isDefault)
+const selecteAddress = computed(() => {
+  return addressStore.selectedAddress || orderPre.value?.userAddresses.find((v) => v.isDefault)
 })
 
 // 提交订单
 const onOrderSubmit = async () => {
-  if (!selectedAddress.value?.id) {
-    return uni.showToast({ icon: 'none', title: '请选择收获地址' })
+  // 没有收货地址提醒
+  if (!selecteAddress.value?.id) {
+    return uni.showToast({ icon: 'none', title: '请选择收货地址' })
   }
+  // 发送请求
   const res = await postMemberOrderAPI({
-    addressId: selectedAddress.value?.id,
+    addressId: selecteAddress.value?.id,
     buyerMessage: buyerMessage.value,
     deliveryTimeType: activeDelivery.value.type,
-    goods: orderPre.value!.goods.map(v => ({ count: v.count, skuId: v.skuId })),
+    goods: orderPre.value!.goods.map((v) => ({ count: v.count, skuId: v.skuId })),
     payChannel: 2,
-    payType: 1
+    payType: 1,
   })
   // 关闭当前页面，跳转到订单详情，传递订单id
-  uni.redirectTo({url:`/pagesOrder/detail/detail?id=${res.result.id}`})
+  uni.redirectTo({ url: `/pagesOrder/detail/detail?id=${res.result.id}` })
 }
 </script>
 
 <template>
-  <scroll-view scroll-y class="viewport">
+  <scroll-view enable-back-to-top scroll-y class="viewport">
     <!-- 收货地址 -->
-    <navigator v-if="selectedAddress" class="shipment" hover-class="none" url="/pagesMember/address/address?from=order">
-      <view class="user"> {{ selectedAddress.receiver }} {{ selectedAddress.contact }} </view>
-      <view class="address"> {{ selectedAddress.fullLocation }} {{ selectedAddress.address }}</view>
+    <navigator
+      v-if="selecteAddress"
+      class="shipment"
+      hover-class="none"
+      url="/pagesMember/address/address?from=order"
+    >
+      <view class="user"> {{ selecteAddress.receiver }} {{ selecteAddress.contact }} </view>
+      <view class="address"> {{ selecteAddress.fullLocation }} {{ selecteAddress.address }} </view>
       <text class="icon icon-right"></text>
     </navigator>
-    <navigator v-else class="shipment" hover-class="none" url="/pagesMember/address/address?from=order">
+    <navigator
+      v-else
+      class="shipment"
+      hover-class="none"
+      url="/pagesMember/address/address?from=order"
+    >
       <view class="address"> 请选择收货地址 </view>
       <text class="icon icon-right"></text>
     </navigator>
 
     <!-- 商品信息 -->
     <view class="goods">
-      <navigator v-for="item in orderPre?.goods" :key="item.skuId" :url="`/pages/goods/goods?id=${item.id}`" class="item"
-        hover-class="none">
+      <navigator
+        v-for="item in orderPre?.goods"
+        :key="item.skuId"
+        :url="`/pages/goods/goods?id=${item.id}`"
+        class="item"
+        hover-class="none"
+      >
         <image class="picture" :src="item.picture" />
         <view class="meta">
-          <view class="name ellipsis">{{ item.name }}</view>
-          <view class="attrs">{{ item.attrText }}</view>
+          <view class="name ellipsis"> {{ item.name }} </view>
+          <view class="attrs">{{ item.attrsText }}</view>
           <view class="prices">
             <view class="pay-price symbol">{{ item.payPrice }}</view>
-            <view class="price symbol">{{ item.count }}</view>
+            <view class="price symbol">{{ item.price }}</view>
           </view>
           <view class="count">x{{ item.count }}</view>
         </view>
@@ -108,7 +140,12 @@ const onOrderSubmit = async () => {
       </view>
       <view class="item">
         <text class="text">订单备注</text>
-        <input class="input" :cursor-spacing="30" placeholder="选题，建议留言前先与商家沟通确认" v-model="buyerMessage" />
+        <input
+          class="input"
+          :cursor-spacing="30"
+          placeholder="选题，建议留言前先与商家沟通确认"
+          v-model="buyerMessage"
+        />
       </view>
     </view>
 
@@ -116,11 +153,11 @@ const onOrderSubmit = async () => {
     <view class="settlement">
       <view class="item">
         <text class="text">商品总价: </text>
-        <text class="number symbol">{{ orderPre?.summary?.totalPrice.toFixed(2) }}</text>
+        <text class="number symbol">{{ orderPre?.summary.totalPrice.toFixed(2) }}</text>
       </view>
       <view class="item">
         <text class="text">运费: </text>
-        <text class="number symbol">{{ orderPre?.summary?.postFee.toFixed(2) }}</text>
+        <text class="number symbol">{{ orderPre?.summary.postFee.toFixed(2) }}</text>
       </view>
     </view>
   </scroll-view>
@@ -128,9 +165,11 @@ const onOrderSubmit = async () => {
   <!-- 吸底工具栏 -->
   <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
     <view class="total-pay symbol">
-      <text class="number">{{ orderPre?.summary?.totalPayPrice.toFixed(2) }}</text>
+      <text class="number">{{ orderPre?.summary.totalPayPrice.toFixed(2) }}</text>
     </view>
-    <view class="button" :class="{ disabled: !selectedAddress?.id }" @tap="onOrderSubmit"> 提交订单 </view>
+    <view class="button" :class="{ disabled: !selecteAddress?.id }" @tap="onOrderSubmit">
+      提交订单
+    </view>
   </view>
 </template>
 
@@ -141,10 +180,6 @@ page {
   height: 100%;
   overflow: hidden;
   background-color: #f4f4f4;
-}
-
-.viewport {
-  margin-bottom: 100rpx;
 }
 
 .symbol::before {
@@ -158,7 +193,8 @@ page {
   padding: 30rpx 30rpx 30rpx 84rpx;
   font-size: 26rpx;
   border-radius: 10rpx;
-  background: url(https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/locate.png) 20rpx center / 50rpx no-repeat #fff;
+  background: url(https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/locate.png)
+    20rpx center / 50rpx no-repeat #fff;
   position: relative;
 
   .icon {
