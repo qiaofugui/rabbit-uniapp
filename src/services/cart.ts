@@ -8,6 +8,8 @@ enum API {
   CARTLIST_URL = '/member/cart',
   // 删除购物车
   DELETECART_URL = '/member/cart',
+  // 选中/不选中/修改数量购物车商品
+  UPDATECART_URL = '/member/cart/',
 }
 
 // 加入购物车
@@ -33,5 +35,14 @@ export const deleteMemberCartAPI = (data: { ids: string[] }) => {
     method: 'DELETE',
     url: `${API.DELETECART_URL}`,
     data
+  })
+}
+
+// 选中/不选中/修改数量购物车商品
+export const putMemberCartBySkuIdAPI = (skuId: string, data: { selected?: boolean, count?: number }) => {
+  return http({
+    method: 'PUT',
+    url: `${API.UPDATECART_URL}${skuId}`,
+    data,
   })
 }
